@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
                 startMarker = currentMarker;            //当前marker设为起点marker
                 currentMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.flag_start));
                 startNum = returnSpotNum(currentMarker.getTitle());
-                Toast.makeText(MainActivity.this, currentMarker.getTitle()+" 设为起点成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, currentMarker.getTitle()+" 设为起点成功", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
                 endMarker = currentMarker;
                 currentMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.flag_end));
                 endNum = returnSpotNum(currentMarker.getTitle());
-                Toast.makeText(MainActivity.this, currentMarker.getTitle()+" 设为终点成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, currentMarker.getTitle()+" 设为终点成功", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -294,9 +294,10 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.clear:
+                aMap.clear();
+                initMarker();
         }
 
         return super.onOptionsItemSelected(item);
