@@ -32,6 +32,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
+
         //浮动按钮
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +59,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
 
+
     private void initView() {
        String spot = getIntent.getStringExtra("spot");
         switch (spot){
@@ -70,7 +72,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 break;
             case "环宇楼":
                 toolBarBg.setBackgroundResource(R.drawable.hyl);
-                textView.setText("环宇楼，啪啪啪");
+                textView.setText("环宇楼");
                  break;
             case "天健体育场":
                 toolBarBg.setBackgroundResource(R.drawable.tyg);

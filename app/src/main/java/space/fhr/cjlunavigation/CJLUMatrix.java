@@ -1,12 +1,11 @@
 package space.fhr.cjlunavigation;
-
-
 import android.widget.Toast;
 
 public class CJLUMatrix {
     public int[][] d;         //保存两点距离  distance
     public int[][] p;         //保存路径    path
     private static CJLUMatrix cjluMatrix = null;
+
 
     //构造器
     private CJLUMatrix(){
@@ -37,7 +36,7 @@ public class CJLUMatrix {
 
         for(int k = 0; k < 10; k++){                         //中转点
             for(v = 0 ; v < 10; v++){                        //起点
-                for(w = 0; w < 10; w++){                    //终点
+                for(w = 0; w < 10; w++){                     //终点
                     if(d[v][k] + d[k][w] < d[v][w]){         //如果经过中转点比不经过短
                         d[v][w] = d[v][k] + d[k][w];         //更新距离
                         p[v][w] = p[v][k];                   //更新路径 经过k
@@ -46,6 +45,7 @@ public class CJLUMatrix {
             }
         }
     }
+
 
     //单例模式 获取实例
     public static CJLUMatrix getInstance(){

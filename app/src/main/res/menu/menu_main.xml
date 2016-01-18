@@ -7,5 +7,5 @@
         android:orderInCategory="100"
         android:title="清空标记"
         app:showAsAction="always"
-        android:icon="@drawable/ic_launcher"/>
+        android:icon="@drawable/clean"/>
 </menu>
