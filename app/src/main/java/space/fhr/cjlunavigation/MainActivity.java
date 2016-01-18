@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -31,6 +33,7 @@ import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.amap.api.maps2d.model.Text;
 
 public class MainActivity extends AppCompatActivity implements AMap.OnMapClickListener, AMap.OnMarkerClickListener,AMap.OnInfoWindowClickListener{
     private MapView mapView;                //容器
@@ -39,12 +42,13 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
     private Button setAsEnd;                //设为终点
     private Button showPath;                //路径规划
     private TextView currentPosition;       //当前位置
+    private TextView pathText;                  //路径
     private CJLUMatrix myMatrix;            //数据矩阵
     private  Marker currentMarker;       //当前marker
     private Marker startMarker;           //起点marker
     private Marker endMarker;           //终点marker
-    private  int startNum ;              //起点编号
-    private  int endNum ;                 //终点编号
+    private  int startNum = -1;              //起点编号
+    private  int endNum = -1;                 //终点编号
     private Marker TSG,XYL,HYL,TYG,ZDM,RYH,SBL,QSL,XH,QM;       //地点
 
     @Override
@@ -53,14 +57,16 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //toolbar.setNavigationIcon(R.drawable.logocjlu);                  //工具栏logo
 
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        setAsStart = (Button)findViewById(R.id.button_start);           //起点按钮
-        setAsEnd = (Button)findViewById(R.id.button_end);               //终点按钮
+        setAsStart = (Button)findViewById(R.id.button_start);               //起点按钮
+        setAsEnd = (Button)findViewById(R.id.button_end);                   //终点按钮
         currentPosition = (TextView)findViewById(R.id.current_position);    //当前位置信息
+        pathText = (TextView)findViewById(R.id.textview_path);
         showPath = (Button)findViewById(R.id.button_show_path);         //规划路径
-        myMatrix = CJLUMatrix.getInstance();                            //数据
+        myMatrix = CJLUMatrix.getInstance();                            //数据矩阵
 
         initAMap();                                         //初始化地图
         initMarker();                                       //初始化Marker
@@ -105,21 +111,33 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
         showPath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "路径规划成功！", Toast.LENGTH_SHORT).show();
-                int s = startNum;
-                int e = endNum;
-                int k = myMatrix.p[startNum][endNum];
-                while(k != endNum){
+                if(startNum == -1 || endNum == -1){
+                    Toast.makeText(MainActivity.this, "请完成起点和终点的选择!", Toast.LENGTH_SHORT).show();
+                } else {
+                    String path = "路径:  " + numToMarker(startNum).getTitle() + " --> ";       //起点->
+                    Toast.makeText(MainActivity.this, "路径规划成功！", Toast.LENGTH_SHORT).show();
+                    int s = startNum;
+                    int e = endNum;
+                    int k = myMatrix.p[startNum][endNum];
+                    while (k != endNum) {
+                        aMap.addPolyline(new PolylineOptions().add(numToMarker(s).getPosition(),
+                                numToMarker(k).getPosition()));     //s k之间划线
+                        path = path + numToMarker(k).getTitle() + " --> ";  //中转点->
+
+                        s = k;                              //s后移
+                        k = myMatrix.p[k][endNum];          //更新k
+                    }
+
                     aMap.addPolyline(new PolylineOptions().add(numToMarker(s).getPosition(),
                             numToMarker(k).getPosition()));     //s k之间划线
-                            s = k;                              //s后移
-                            k = myMatrix.p[k][endNum];          //更新k
+
+                    path = path + numToMarker(e).getTitle()
+                                + "    总距离(米): "
+                                + myMatrix.d[startNum][endNum];
+
+
+                    pathText.setText(path);
                 }
-
-                aMap.addPolyline(new PolylineOptions().add(numToMarker(s).getPosition(),
-                        numToMarker(k).getPosition()));     //s k之间划线
-
-
             }
         });
     }
@@ -296,7 +314,9 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
 
         switch (id){
             case R.id.clear:
-                aMap.clear();
+                aMap.clear();               //清除覆盖物
+                startNum = -1;
+                endNum = -1;
                 initMarker();
         }
 

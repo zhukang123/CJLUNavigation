@@ -2,6 +2,7 @@ package space.fhr.cjlunavigation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -69,16 +70,19 @@ public class ItemDetailActivity extends AppCompatActivity {
                 break;
             case "翔宇楼":
                 toolBarBg.setBackgroundResource(R.drawable.xyl);
+                textView.setText(R.string.xyl);
                 break;
             case "环宇楼":
                 toolBarBg.setBackgroundResource(R.drawable.hyl);
-                textView.setText("环宇楼");
+                textView.setText(R.string.hyl);
                  break;
             case "天健体育场":
                 toolBarBg.setBackgroundResource(R.drawable.tyg);
+                textView.setText(R.string.tyg);
                 break;
             case "中国计量学院正门":
                 toolBarBg.setBackgroundResource(R.drawable.cjluzdm);
+                textView.setText(R.string.zdm);
                 break;
             case "日月湖":
                 toolBarBg.setBackgroundResource(R.drawable.ryh);
@@ -86,15 +90,19 @@ public class ItemDetailActivity extends AppCompatActivity {
                 break;
             case "赛博楼":
                 toolBarBg.setBackgroundResource(R.drawable.sbl);
+                textView.setText(R.string.sbl);
                 break;
             case "求是楼":
                 toolBarBg.setBackgroundResource(R.drawable.qsl);
+                textView.setText(R.string.qsl);
                 break;
             case "星火工训中心":
                 toolBarBg.setBackgroundResource(R.drawable.xh);
+                textView.setText(R.string.xh);
                 break;
             case "启明广场":
                 toolBarBg.setBackgroundResource(R.drawable.qm);
+                textView.setText(R.string.qm);
                 break;
 
         }
