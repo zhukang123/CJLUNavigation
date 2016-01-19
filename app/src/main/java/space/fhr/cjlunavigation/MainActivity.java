@@ -35,7 +35,8 @@ import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.maps2d.model.Text;
 
-public class MainActivity extends AppCompatActivity implements AMap.OnMapClickListener, AMap.OnMarkerClickListener,AMap.OnInfoWindowClickListener{
+public class MainActivity extends AppCompatActivity implements AMap.OnMapClickListener,
+        AMap.OnMarkerClickListener,AMap.OnInfoWindowClickListener{
     private MapView mapView;                //容器
     private AMap aMap;                      //地图
     private Button setAsStart;              //设为起点
@@ -51,33 +52,34 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
     private  int endNum = -1;                 //终点编号
     private Marker TSG,XYL,HYL,TYG,ZDM,RYH,SBL,QSL,XH,QM;       //地点
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.setNavigationIcon(R.drawable.logocjlu);                  //工具栏logo
 
-        mapView = (MapView) findViewById(R.id.mapView);
+        //从xml中拿到对象
+        mapView = (MapView) findViewById(R.id.mapView);                     //地图容器
         mapView.onCreate(savedInstanceState);
         setAsStart = (Button)findViewById(R.id.button_start);               //起点按钮
         setAsEnd = (Button)findViewById(R.id.button_end);                   //终点按钮
         currentPosition = (TextView)findViewById(R.id.current_position);    //当前位置信息
         pathText = (TextView)findViewById(R.id.textview_path);
         showPath = (Button)findViewById(R.id.button_show_path);         //规划路径
+
         myMatrix = CJLUMatrix.getInstance();                            //数据矩阵
 
         initAMap();                                         //初始化地图
         initMarker();                                       //初始化Marker
         initButton();                                       //初始化button
 
-
     }
 
 
 
-    //按钮监听
+    //MainActivity中三个按钮监听
     private void initButton() {
 
         //设为起点
@@ -107,18 +109,22 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
         });
 
 
-        //显示路径
+        //aMap上显示路径 划线  TextView中显示具体路径 距离
         showPath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(startNum == -1 || endNum == -1){
+                if(startNum == -1 || endNum == -1){         //未选择起点 终点
+
                     Toast.makeText(MainActivity.this, "请完成起点和终点的选择!", Toast.LENGTH_SHORT).show();
+
                 } else {
+
                     String path = "路径:  " + numToMarker(startNum).getTitle() + " --> ";       //起点->
                     Toast.makeText(MainActivity.this, "路径规划成功！", Toast.LENGTH_SHORT).show();
                     int s = startNum;
                     int e = endNum;
-                    int k = myMatrix.p[startNum][endNum];
+                    int k = myMatrix.p[startNum][endNum];           //最短路径中 第一个中转点的输出
+
                     while (k != endNum) {
                         aMap.addPolyline(new PolylineOptions().add(numToMarker(s).getPosition(),
                                 numToMarker(k).getPosition()));     //s k之间划线
@@ -135,15 +141,14 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
                                 + "    总距离(米): "
                                 + myMatrix.d[startNum][endNum];
 
-
-                    pathText.setText(path);
+                    pathText.setText(path);                     //显示路径信息
                 }
             }
         });
     }
 
 
-
+     //编号对应Marker对象
     public Marker numToMarker(int num){
         switch (num){
             case 0:
@@ -172,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
 
     }
 
-
+    //地点对应编号
     public int returnSpotNum(String spot) {
         switch (spot){
             case "赛博楼":
@@ -195,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
                 return 8;
             case "天健体育场":
                 return 9;
-
             default:
                 Toast.makeText(MainActivity.this, "未选择", Toast.LENGTH_SHORT).show();
                 return -1;
@@ -203,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
     }
 
 
+    //初始化marker  十个地点 markerOptions , marker
     private void initMarker() {
         LatLng CJLU = new LatLng(30.320793,120.362663);
         LatLng LIBRARY = new LatLng(30.321296,120.360214);
@@ -247,32 +252,32 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
                 .position(QIMING)
                 .title("启明广场"));
 
-
     }
 
 
+    //地图初始化 设置点击事件
     private void initAMap() {
         if(aMap == null){
-            aMap = mapView.getMap();                                //初始化
+            aMap = mapView.getMap();
         }
 
         //移动视图到CJLU
         LatLng CJLU = new LatLng(30.320793,120.362663);
+        //当前视图移动到cjlu  Factory工厂方法
         aMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(CJLU,16,0,0)));
 
         aMap.setOnMapClickListener(this);                           //map点击监听
         aMap.setOnInfoWindowClickListener(this);                    //windowInfo点击监听
-        aMap.setOnMarkerClickListener(this);
+        aMap.setOnMarkerClickListener(this);                        //marker点击监听
 
     }
-
 
 
     //marker信息窗口点击
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(MainActivity.this,ItemDetailActivity.class);
-        intent.putExtra("spot",marker.getTitle());
+        intent.putExtra("spot",marker.getTitle());                  //附上当前marker的title
         startActivity(intent);                                      //跳转到detail界面
     }
 
@@ -281,23 +286,26 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
     //marker标志点击
     @Override
     public boolean onMarkerClick(Marker marker) {
-        currentMarker = marker;
-        marker.showInfoWindow();
 
-        double longitude = marker.getPosition().longitude;
+        currentMarker = marker;                             //当前marker
+        marker.showInfoWindow();                            //显示infoWindow
+
+        double longitude = marker.getPosition().longitude;          //拿到坐标信息
         double latitude = marker.getPosition().latitude;
         currentPosition.setText("当前位置:\n"+marker.getTitle()+ "\n坐标(经/纬):\n" +longitude+"/"+ latitude+"\n");
 
         return true;
     }
 
+
+    //地图点击
     @Override
     public void onMapClick(LatLng latLng) {
-
 
     }
 
 
+    //菜单栏布局填充
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -305,19 +313,19 @@ public class MainActivity extends AppCompatActivity implements AMap.OnMapClickLi
         return true;
     }
 
+
+    //菜单栏选项
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         switch (id){
             case R.id.clear:
-                aMap.clear();               //清除覆盖物
-                startNum = -1;
+                aMap.clear();               //清除所有覆盖物
+                startNum = -1;              //起点终点marker 置-1
                 endNum = -1;
-                initMarker();
+                initMarker();               //初始化marker
         }
 
         return super.onOptionsItemSelected(item);

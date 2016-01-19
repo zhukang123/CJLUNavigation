@@ -21,8 +21,8 @@ import javax.xml.transform.Source;
  * in a .
  */
 public class ItemDetailActivity extends AppCompatActivity {
-    private TextView textView;
-    private View toolBarBg;
+    private TextView textView;          //地点描述TextView
+    private View toolBarBg;             //背景图view
     private Intent getIntent;
 
     @Override
@@ -34,7 +34,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        //浮动按钮
+        //浮动按钮  返回MainActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,9 +47,9 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         toolBarBg = findViewById(R.id.toolbar_layout);
         textView = (TextView) findViewById(R.id.text_view);
-        getIntent = getIntent();
+        getIntent = getIntent();        //拿到Intent
 
-        // Show the Up button in the action bar.
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -62,10 +62,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
 
     private void initView() {
-       String spot = getIntent.getStringExtra("spot");
+       String spot = getIntent.getStringExtra("spot");          //地点
         switch (spot){
             case "逸夫图书馆":
-                toolBarBg.setBackgroundResource(R.drawable.library);
+                toolBarBg.setBackgroundResource(R.drawable.library);        //添加相应的背景图片 文字说明
                 textView.setText(R.string.lib);
                 break;
             case "翔宇楼":
